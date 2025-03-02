@@ -1,10 +1,8 @@
 import { FaClipboardList, FaUserPlus, FaSignInAlt } from 'react-icons/fa';
-import { keycloak } from '../auth/auth';
+import { useAuth } from '../auth/AuthContext';
 
 const LandingPage = () => {
-  const handleLogin = () => {
-    keycloak.login();
-  };
+  const { login, keycloak } = useAuth();
 
   const handleRegister = () => {
     keycloak.register();
@@ -26,17 +24,19 @@ const LandingPage = () => {
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <button 
               onClick={handleRegister}
-              className="btn btn-primary bg-rose-600 hover:bg-rose-500 border-none text-white"
+              className="flex items-center justify-center px-4 py-2 text-white bg-rose-600 rounded-lg 
+                       hover:bg-rose-500 transition-colors duration-200 font-medium"
             >
               <FaUserPlus className="mr-2" />
-              Register
+              <span>Register</span>
             </button>
             <button 
-              onClick={handleLogin}
-              className="btn bg-slate-700 hover:bg-slate-600 text-white border-none"
+              onClick={login}
+              className="flex items-center justify-center px-4 py-2 text-white bg-slate-700 hover:bg-slate-600 
+                       rounded-lg transition-colors duration-200 font-medium"
             >
               <FaSignInAlt className="mr-2" />
-              Login
+              <span>Login</span>
             </button>
           </div>
         </div>

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useTodos } from '../hooks/useTodos';
 import Todo from "./todo";
 import TodoInput from './todo-input';

@@ -1,55 +1,48 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router';
-import { useKeycloak } from '@react-keycloak/web';
-import { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router';  // Fix import
+import { useAuth } from './auth/AuthContext';
+import { useState } from 'react';
 import Navbar from './components/navbar';
 import TodoTable from './components/todo-table';
 import Dashboard from './components/dashboard';
 import LandingPage from './components/landing-page';
 import ErrorBoundary from './components/error-boundary';
 
-function App() {
-    const { keycloak, initialized } = useKeycloak();
+interface ProtectedRouteProps {
+  element: React.ReactNode;
+}
+
+const ProtectedRoute = ({ element }: ProtectedRouteProps) => {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? element : <Navigate to="/" replace />;
+};
+
+const App = () => {
+    const { isAuthenticated, isLoading } = useAuth();
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     
-    // Function to trigger reload by incrementing refreshTrigger
     const handleTasksDeleted = () => {
         setRefreshTrigger(prev => prev + 1);
     };
     
-    if (!initialized) {
+    if (isLoading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
                 <div className="loading loading-spinner loading-lg text-rose-600"></div>
             </div>
         );
     }
-    
+
     return (
-        <Router>
-            <div className="min-h-screen bg-gray-100">
-                {keycloak.authenticated && <Navbar onTasksDeleted={handleTasksDeleted} />}
-                <ErrorBoundary>
-                    <Routes>
-                        <Route 
-                            path="/" 
-                            element={
-                                keycloak.authenticated 
-                                    ? <Dashboard refreshTrigger={refreshTrigger} /> 
-                                    : <LandingPage />
-                            } 
-                        />
-                        <Route 
-                            path="/todos" 
-                            element={
-                                keycloak.authenticated 
-                                    ? <TodoTable refreshTrigger={refreshTrigger} /> 
-                                    : <Navigate to="/" replace />
-                            } 
-                        />
-                    </Routes>
-                </ErrorBoundary>
-            </div>
-        </Router>
+        <div className="min-h-screen bg-gray-100">
+            {isAuthenticated && <Navbar onTasksDeleted={handleTasksDeleted} />}
+            <ErrorBoundary>
+                <Routes>
+                    <Route path="/" element={!isAuthenticated ? <LandingPage /> : <Dashboard refreshTrigger={refreshTrigger} />} />
+                    <Route path="/todos" element={<ProtectedRoute element={<TodoTable refreshTrigger={refreshTrigger} />} />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+            </ErrorBoundary>
+        </div>
     );
 }
 

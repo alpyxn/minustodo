@@ -29,7 +29,7 @@ export function useTodos(refreshTrigger = 0) {
 
     const handleAddTask = useCallback(async (taskText: string) => {
         try {
-            const newTask = await addTask(taskText);
+              await addTask(taskText);
             
             // Refresh the task list after adding
             await loadTasks();
