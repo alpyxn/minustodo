@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router';  // Fix import
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './auth/AuthContext';
 import { useState } from 'react';
 import Navbar from './components/navbar';

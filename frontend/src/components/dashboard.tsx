@@ -1,5 +1,5 @@
 import { useTodos } from '../hooks/useTodos';
-import { useNavigate } from 'react-router'; // Fix the import from react-router to react-router-dom
+import { useNavigate } from 'react-router-dom'; // Fixed import from react-router to react-router-dom
 import { FaClipboardList, FaClipboardCheck, FaRegClock, FaTasks } from 'react-icons/fa';
 
 const Dashboard = ({ refreshTrigger = 0 }) => {

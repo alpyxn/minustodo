@@ -1,7 +1,56 @@
+<!DOCTYPE html>
 <html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; frame-ancestors 'self'" />
+    <title>Silent SSO Check</title>
+</head>
 <body>
     <script>
-        parent.postMessage(location.href, location.origin);
+        function parseCallbackParams() {
+            try {
+                const params = {};
+                
+                // Safely parse search params
+                if (location.search) {
+                    const searchParams = new URLSearchParams(location.search);
+                    searchParams.forEach((value, key) => {
+                        params[key] = value;
+                    });
+                }
+
+                // Safely parse hash params
+                if (location.hash && location.hash.length > 1) {
+                    const hashParams = new URLSearchParams(location.hash.substring(1));
+                    hashParams.forEach((value, key) => {
+                        params[key] = value;
+                    });
+                }
+
+                return params;
+            } catch (e) {
+                console.error('Error parsing callback parameters:', e);
+                return {};
+            }
+        }
+
+        // Post message only to parent with origin check
+        window.onload = function() {
+            try {
+                const origin = window.location.origin;
+                const params = parseCallbackParams();
+
+                // Only post to parent if it exists
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage(params, origin);
+                }
+            } catch (e) {
+                console.error('Error in silent check-sso:', e);
+            }
+        };
     </script>
+    <noscript>
+        <p>JavaScript is required for authentication.</p>
+    </noscript>
 </body>
 </html>
