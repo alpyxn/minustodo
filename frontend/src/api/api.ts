@@ -2,7 +2,6 @@ import axios, { AxiosInstance } from "axios";
 import { keycloak } from "../auth/auth"; 
 import { Todo } from "../types/todo";
 
-// Create an API client with proper configuration
 const apiClient: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8081',
     headers: {
@@ -11,7 +10,6 @@ const apiClient: AxiosInstance = axios.create({
     withCredentials: true
 });
 
-// Check if a token is about to expire (within the given seconds)
 const isTokenExpired = (minValidity = 30) => {
     if (!keycloak.tokenParsed) {
         return true;
@@ -23,28 +21,23 @@ const isTokenExpired = (minValidity = 30) => {
     }
 };
 
-// Improved request interceptor with better token refresh and error handling
 apiClient.interceptors.request.use(
     async config => {
-        // If not authenticated, don't add the token
         if (!keycloak.authenticated) {
             console.log('User is not authenticated, skipping authentication header');
             return config;
         }
         
         try {
-            // Only refresh if token is about to expire
             if (isTokenExpired(70)) {
                 console.log('Token is about to expire, refreshing...');
                 await keycloak.updateToken(70);
                 console.log('Token was successfully refreshed');
             }
             
-            // Set the token in the request header
             const token = keycloak.token;
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
-                // Store token in localStorage for persistence
                 localStorage.setItem('kc_token', token);
             } else {
                 console.warn('No token available despite being authenticated');
@@ -58,26 +51,21 @@ apiClient.interceptors.request.use(
     error => Promise.reject(error)
 );
 
-// Add response interceptor to handle 401 errors more robustly
 apiClient.interceptors.response.use(
     response => response,
     async error => {
         const originalRequest = error.config;
         
-        // Handle 401 Unauthorized errors
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             console.log('Received 401 error, attempting to refresh token');
             
             try {
-                // Clear existing token that might be invalid
                 localStorage.removeItem('kc_token');
                 
-                // Force token refresh
                 await keycloak.updateToken(0);
                 console.log('Token refreshed after 401 error');
                 
-                // Update authorization header with new token
                 const newToken = keycloak.token;
                 if (newToken) {
                     originalRequest.headers.Authorization = `Bearer ${newToken}`;
@@ -107,7 +95,6 @@ const API_ENDPOINTS = {
 
 export async function fetchTasks(): Promise<Todo[]> {
   try {
-    // Ensure authenticated before making the request
     if (!keycloak.authenticated) {
       console.log('User is not authenticated, tasks cannot be fetched');
       throw new Error('Authentication required');

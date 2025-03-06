@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect } from 'react';
 import { Todo } from '../types/todo';
 import { fetchTasks, addTask, updateTaskStatus, deleteTask } from '../api/api.ts';
 
-// Add a refreshTrigger parameter to your hook
 export function useTodos(refreshTrigger = 0) {
     const [todos, setTodos] = useState<Todo[]>([]);
     const [loading, setLoading] = useState(true);
@@ -22,7 +21,6 @@ export function useTodos(refreshTrigger = 0) {
         }
     }, []);
     
-    // Add refreshTrigger to the dependency array
     useEffect(() => {
         loadTasks();
     }, [loadTasks, refreshTrigger]);
@@ -31,7 +29,6 @@ export function useTodos(refreshTrigger = 0) {
         try {
               await addTask(taskText);
             
-            // Refresh the task list after adding
             await loadTasks();
         } catch (error) {
             console.error('Error adding task:', error);
@@ -43,14 +40,12 @@ export function useTodos(refreshTrigger = 0) {
         try {
             const newStatus = currentStatus === 0 ? 1 : 0;
             
-            // Update optimistically
             setTodos(prev => prev.map(todo => 
                 todo.id === id ? { ...todo, status: newStatus } : todo
             ));
             
             await updateTaskStatus(id, newStatus);
         } catch (error) {
-            // Revert on failure
             setTodos(prev => prev.map(todo => 
                 todo.id === id ? { ...todo, status: currentStatus } : todo
             ));
