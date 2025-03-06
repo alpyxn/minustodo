@@ -17,8 +17,10 @@ const isTokenExpired = (minValidity = 30) => {
         return true;
     }
     
+    if(keycloak.tokenParsed.exp){
     const expiresIn = keycloak.tokenParsed.exp - Math.floor(Date.now() / 1000);
     return expiresIn < minValidity;
+    }
 };
 
 // Improved request interceptor with better token refresh and error handling
@@ -49,8 +51,6 @@ apiClient.interceptors.request.use(
             }
         } catch (error) {
             console.error('Failed to refresh token in request interceptor', error);
-            // Force re-authentication if token refresh fails
-            await keycloak.login();
         }
         
         return config;
@@ -88,13 +88,10 @@ apiClient.interceptors.response.use(
                 }
             } catch (refreshError) {
                 console.error('Failed to refresh token after 401', refreshError);
-                // Redirect to login page
-                await keycloak.login();
                 return Promise.reject(error);
             }
         }
         
-        // For other errors, just reject the promise
         return Promise.reject(error);
     }
 );
@@ -112,8 +109,7 @@ export async function fetchTasks(): Promise<Todo[]> {
   try {
     // Ensure authenticated before making the request
     if (!keycloak.authenticated) {
-      console.log('User is not authenticated, redirecting to login');
-      await keycloak.login();
+      console.log('User is not authenticated, tasks cannot be fetched');
       throw new Error('Authentication required');
     }
     

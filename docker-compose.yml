@@ -36,37 +36,19 @@ services:
       KC_HOSTNAME: localhost
       KC_HOSTNAME_PORT: 8180
       KC_HOSTNAME_STRICT: "false"
-      KC_HOSTNAME_STRICT_HTTPS: "false"
       KC_PROXY: edge
-      
-      # Enhanced security and CORS settings
       KC_SPI_CORS_ENABLED: "true"
-      KC_SPI_CORS_ALLOW_CREDENTIALS: "true"
-      KC_SPI_CORS_ALLOW_METHODS: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS"
-      KC_SPI_CORS_ALLOW_HEADERS: "Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization"
-      KC_SPI_CORS_ALLOW_ORIGINS: "http://localhost:3000,http://localhost:5173"
-      KC_SPI_CORS_EXPOSED_HEADERS: "WWW-Authenticate,Authorization"
-      KC_SPI_CORS_MAX_AGE: "3600"
-      
-      # Security headers
-      KC_SPI_CONTENT_SECURITY_POLICY_DEFAULT_HEADER: "frame-ancestors 'self' http://localhost:3000 http://localhost:5173; frame-src 'self' http://localhost:3000 http://localhost:5173; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' http://localhost:8180 http://localhost:3000 http://localhost:5173"
-      
-      # Web Origins
-      KC_SPI_WEB_ORIGINS_ALLOWED_ORIGINS: "+http://localhost:3000 http://localhost:5173"
-      
-      # Cache config for better performance
-      KC_CACHE: "local"
-      
-      # HTTP settings
-      KC_HTTP_RELATIVE_PATH: "/auth"
-      KC_PROXY_ADDRESS_FORWARDING: "true"
+      KC_SPI_CORS_ALLOW_ORIGINS: "http://localhost:3000"
+      KC_SPI_CONNECTIONS_HTTP_DEFAULT_ALLOW_CREDENTIALS: "true"
+      KC_SPI_CONNECTIONS_HTTP_DEFAULT_ALLOWED_ORIGINS: "http://localhost:3000"
+      KC_SPI_CONNECTIONS_HTTP_DEFAULT_ALLOWED_METHODS: "GET,POST,PUT,DELETE,OPTIONS"
+      KC_SPI_CONNECTIONS_HTTP_DEFAULT_ALLOWED_HEADERS: "Authorization,Content-Type,Accept,Origin,X-Requested-With"
+      KC_SPI_CONNECTIONS_HTTP_DEFAULT_EXPOSED_HEADERS: "Authorization,Content-Type"
     command: [
       "start-dev",
       "--http-enabled=true",
-      "--hostname=localhost",
       "--hostname-strict=false",
-      "--proxy=edge",
-      "--features=token-exchange,admin-fine-grained-authz,scripts"
+      "--proxy=edge"
     ]
     ports:
       - "8180:8080"
@@ -77,11 +59,9 @@ services:
       - backend
     volumes:
       - keycloak_data:/opt/keycloak/data/
-      - keycloak_themes:/opt/keycloak/themes/
 
 volumes:
   keycloak_data:
-  keycloak_themes:
   my-db:
     driver: local
 
