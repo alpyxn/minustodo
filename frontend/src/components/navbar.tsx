@@ -38,12 +38,9 @@ function Navbar({ onTasksDeleted = () => {} }) {
         setIsDeleting(true);
         try {
             await deleteAllTasks();
-            // Trigger re-render after successful deletion
             onTasksDeleted();
-            // You could add a notification or toast here to confirm success
         } catch (error) {
             console.error('Failed to delete all tasks:', error);
-            // You could add error notification here
         } finally {
             setIsDeleting(false);
         }

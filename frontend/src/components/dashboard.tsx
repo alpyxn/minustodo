@@ -1,12 +1,11 @@
 import { useTodos } from '../hooks/useTodos';
-import { useNavigate } from 'react-router-dom'; // Fixed import from react-router to react-router-dom
+import { useNavigate } from 'react-router-dom'; 
 import { FaClipboardList, FaClipboardCheck, FaRegClock, FaTasks } from 'react-icons/fa';
 
 const Dashboard = ({ refreshTrigger = 0 }) => {
-  const navigate = useNavigate(); // Initialize the navigate function
+  const navigate = useNavigate(); 
   const { todos, loading, error } = useTodos(refreshTrigger);
 
-  // Calculate statistics
   const totalTasks = todos.length;
   const completedTasks = todos.filter(todo => todo.status === 1).length;
   const uncompletedTasks = totalTasks - completedTasks;
@@ -34,9 +33,7 @@ const Dashboard = ({ refreshTrigger = 0 }) => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-center mb-8 text-slate-800">Task Dashboard</h1>
       
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {/* Total Tasks Card */}
         <div className="card bg-slate-600 text-white shadow-xl">
           <div className="card-body items-center text-center">
             <div className="p-4 bg-slate-700 rounded-full mb-2">
