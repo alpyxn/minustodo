@@ -61,7 +61,7 @@ const Dashboard = ({ refreshTrigger = 0 }) => {
             <div className="p-4 bg-slate-700 rounded-full mb-2">
               <FaClipboardCheck className="w-8 h-8 text-green-400" />
             </div>
-            <h2 className="card-title text-2xl">Completed</h2>
+            <h2 className="card-title text-2xl">Uncompleted</h2>
             <p className="text-5xl font-bold text-green-400">{completedTasks}</p>
           </div>
         </div>
@@ -71,7 +71,7 @@ const Dashboard = ({ refreshTrigger = 0 }) => {
       <div className="flex justify-center mt-8">
         <button 
           onClick={() => navigate('/todos')} 
-          className="btn btn-primary bg-rose-600 hover:bg-rose-500 border-none text-white text-lg px-8 py-3"
+          className="btn btn-primary bg-blue-500 hover:bg-rose-500 border-none text-white text-lg px-8 py-3"
         >
           <FaClipboardList className="mr-2" />
           Manage Todos
